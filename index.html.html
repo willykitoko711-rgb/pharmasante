@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PharmaSanté – Produits pharmaceutiques</title>
+<style>
+  :root {
+    --primary: #0f766e;
+    --primary-dark: #115e59;
+    --accent: #ecfdf5;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    flex-wrap: wrap;
+  }
+  .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.4rem; margin-bottom: 16px; }
+  .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 28px; }
+  .search-box {
+    display: flex;
+    max-width: 520px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  .search-box input {
+    flex: 1;
+    border: none;
+    padding: 16px 22px;
+    font-size: 1rem;
+    outline: none;
+  }
+  .search-box button {
+    border: none;
+    background: var(--primary);
+    color: white;
+    padding: 0 26px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  section { padding: 60px 0; }
+  h2 { font-size: 1.8rem; margin-bottom: 8px; }
+  .section-subtitle { color: var(--muted); margin-bottom: 32px; }
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+  .filter-btn {
+    border: 1px solid var(--border);
+    background: white;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+  .card-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+  .card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .card .category { font-size: 0.8rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .card p { color: var(--muted); font-size: 0.95rem; margin-top: 8px; }
+  .badge {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .badge.otc { background: var(--accent); color: var(--primary-dark); }
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; display: none; }
+  .about { background: var(--accent); }
+  .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 24px; }
+  .about-item { background: white; padding: 28px; border-radius: 16px; }
+  .about-item h3 { color: var(--primary); margin-bottom: 8px; }
+  .contact-form {
+    max-width: 620px;
+    margin: 0 auto;
+    background: white;
+    padding: 36px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+  .form-group input, .form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  .form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .submit-btn:hover { background: var(--primary-dark); }
+  .success { text-align: center; color: var(--primary); font-weight: 600; margin-top: 16px; display: none; }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 20px;
+    max-width: 520px;
+    width: 100%;
+    padding: 36px;
+    position: relative;
+  }
+  .modal h3 { font-size: 1.5rem; margin-bottom: 6px; }
+  .modal .category { color: var(--primary); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
+  .modal p { margin-top: 14px; color: var(--text); }
+  .modal .notice {
+    margin-top: 20px;
+    padding: 14px;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 10px;
+    font-size: 0.88rem;
+  }
+  .close-btn {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none;
+    font-size: 1.6rem; cursor: pointer; color: var(--muted);
+  }
+  footer {
+    background: #111827;
+    color: #d1d5db;
+    padding: 40px 0 24px;
+    font-size: 0.9rem;
+  }
+  footer .legal { margin-top: 24px; padding-top: 20px; border-top: 1px solid #374151; font-size: 0.8rem; color: #9ca3af; }
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.9rem; }
+    .nav-links { gap: 14px; font-size: 0.9rem; }
+    .search-box { flex-direction: column; border-radius: 16px; }
+    .search-box button { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="logo" href="#accueil">PharmaSanté</a>
+    <nav class="nav-links">
+      <a href="#produits">Produits</a>
+      <a href="#apropos">À propos</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero" id="accueil">
+    <div class="container">
+      <h1>Vos produits pharmaceutiques, en toute confiance</h1>
+      <p>Découvrez notre catalogue de produits de santé. Pour tout conseil personnalisé, adressez-vous à votre pharmacien.</p>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Rechercher un produit...">
+        <button id="searchBtn">Rechercher</button>
+      </div>
+    </div>
+  </div>
+
+  <section id="produits">
+    <div class="container">
+      <h2>Notre catalogue</h2>
+      <p class="section-subtitle">Produits présentés à titre d'exemple. Les informations complètes sont disponibles sur chaque fiche.</p>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="productGrid"></div>
+      <p class="empty" id="emptyMsg">Aucun produit ne correspond à votre recherche.</p>
+    </div>
+  </section>
+
+  <section class="about" id="apropos">
+    <div class="container">
+      <h2>À propos de nous</h2>
+      <p class="section-subtitle">Une approche sérieuse, rigoureuse et accessible.</p>
+      <div class="about-grid">
+        <div class="about-item">
+          <h3>Qualité</h3>
+          <p>Nous sélectionnons des produits issus de fabricants reconnus et contrôlés.</p>
+        </div>
+        <div class="about-item">
+          <h3>Information</h3>
+          <p>Chaque fiche renvoie vers la notice officielle. Votre pharmacien reste votre interlocuteur de référence.</p>
+        </div>
+        <div class="about-item">
+          <h3>Accompagnement</h3>
+          <p>Notre équipe répond à vos questions générales sur nos services et notre catalogue.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="container">
+      <h2 style="text-align:center">Nous contacter</h2>
+      <p class="section-subtitle" style="text-align:center">Une question sur un produit ? Écrivez-nous.</p>
+      <form class="contact-form" id="contactForm" action="https://formsubmit.co/kevinkasoko47@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Nouveau message depuis le site PharmaSanté">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" name="nom" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Adresse e-mail</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <input type="text" name="_honey" id="honey" tabindex="-1" autocomplete="off" style="display:none">
+        <button type="submit" class="submit-btn">Envoyer</button>
+        
+      </form>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="close-btn" id="closeModal" aria-label="Fermer">&times;</button>
+    <div class="category" id="modalCategory"></div>
+    <h3 id="modalName"></h3>
+    <p id="modalDesc"></p>
+    <div class="notice">
+      Ce produit peut nécessiter une ordonnance ou un avis professionnel. Consultez la notice et votre pharmacien avant toute utilisation.
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p><strong>PharmaSanté</strong> – Site de démonstration</p>
+    <p>Les informations présentées sont indicatives et ne remplacent pas l'avis d'un professionnel de santé.</p>
+    <div class="legal">
+      © 2026 PharmaSanté. Mentions légales, données personnelles et conditions à compléter avant mise en ligne.
+    </div>
+  </div>
+</footer>
+
+<script>
+  const products = [
+    { id: 1, name: "Produit A – Antalgique", category: "Douleur", icon: "💊", otc: true, desc: "Fiche d'exemple. Remplacez par la description officielle du produit et le lien vers sa notice." },
+    { id: 2, name: "Produit B – Vitamines", category: "Compléments", icon: "🌿", otc: true, desc: "Fiche d'exemple pour un complément alimentaire. Mentions réglementaires à ajouter." },
+    { id: 3, name: "Produit C – Antihistaminique", category: "Allergies", icon: "🌸", otc: false, desc: "Fiche d'exemple pour un médicament soumis à conditions de délivrance." },
+    { id: 4, name: "Produit D – Soin cutané", category: "Dermatologie", icon: "🧴", otc: true, desc: "Fiche d'exemple pour un produit dermatologique." },
+    { id: 5, name: "Produit E – Sirop", category: "Toux et rhume", icon: "🍯", otc: true, desc: "Fiche d'exemple pour un sirop. Vérifiez les indications et contre-indications officielles." },
+    { id: 6, name: "Produit F – Soluté", category: "Hydratation", icon: "💧", otc: true, desc: "Fiche d'exemple pour un produit d'hydratation." }
+  ];
+
+  let activeFilter = "Tous";
+  let searchTerm = "";
+
+  const categories = ["Tous", ...new Set(products.map(p => p.category))];
+  const filtersEl = document.getElementById("filters");
+  const gridEl = document.getElementById("productGrid");
+  const emptyEl = document.getElementById("emptyMsg");
+
+  function renderFilters() {
+    filtersEl.innerHTML = "";
+    categories.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "filter-btn" + (cat === activeFilter ? " active" : "");
+      btn.textContent = cat;
+      btn.onclick = () => { activeFilter = cat; renderFilters(); renderProducts(); };
+      filtersEl.appendChild(btn);
+    });
+  }
+
+  function renderProducts() {
+    const norm = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const term = norm(searchTerm);
+    const filtered = products.filter(p =>
+      (activeFilter === "Tous" || p.category === activeFilter) &&
+      norm(p.name).includes(term)
+    );
+    gridEl.innerHTML = "";
+    emptyEl.style.display = filtered.length ? "none" : "block";
+    filtered.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", p.name);
+      card.innerHTML = `
+        <div class="card-icon">${p.icon}</div>
+        <div class="category">${p.category}</div>
+        <h3>${p.name}</h3>
+        <span class="badge ${p.otc ? "otc" : ""}">${p.otc ? "Sans ordonnance" : "Sur ordonnance"}</span>
+      `;
+      card.onclick = () => openModal(p);
+      card.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(p); } };
+      gridEl.appendChild(card);
+    });
+  }
+
+  function openModal(p) {
+    document.getElementById("modalCategory").textContent = p.category;
+    document.getElementById("modalName").textContent = p.name;
+    document.getElementById("modalDesc").textContent = p.desc;
+    document.getElementById("modal").classList.add("open");
+  }
+
+  document.getElementById("closeModal").onclick = () =>
+    document.getElementById("modal").classList.remove("open");
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") document.getElementById("modal").classList.remove("open");
+  });
+  document.getElementById("modal").onclick = e => {
+    if (e.target.id === "modal") e.target.classList.remove("open");
+  };
+
+  function doSearch() {
+    searchTerm = document.getElementById("searchInput").value.trim();
+    renderProducts();
+    document.getElementById("produits").scrollIntoView({ behavior: "smooth" });
+  }
+  document.getElementById("searchBtn").onclick = doSearch;
+  document.getElementById("searchInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") doSearch();
+  });
+
+  // Envoi du formulaire : géré directement par le navigateur (FormSubmit).
+  // Le bouton est désactivé juste avant l'envoi pour éviter un double clic.
+  document.getElementById("contactForm").addEventListener("submit", e => {
+    const btn = e.target.querySelector(".submit-btn");
+    btn.disabled = true;
+    btn.textContent = "Envoi en cours...";
+  });
+
+  renderFilters();
+  renderProducts();
+</script>
+</body>
+</html>
